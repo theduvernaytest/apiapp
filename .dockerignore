@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+dist
+.idea
+.gitignore
+.env
+.git
+data
+LICENSE
+README.md

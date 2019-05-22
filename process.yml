@@ -1,0 +1,5 @@
+apps:
+  - script   : './dist/server.js'
+    name     : 'APIAPP'
+    error_file : '/dev/stderr'
+    out_file   : '/dev/stdout'

@@ -1,0 +1,34 @@
+version: "3"
+services:
+  apiapp:
+    image: theduvernaytest/apiapp:dev
+    env_file:
+      - ./.env
+    networks:
+      - backend
+  webapp:
+    image: theduvernaytest/webapp:dev
+    env_file:
+      - ./.env
+    ports:
+      - "4000:4000"
+    networks:
+      - backend
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
+    networks:
+      - backend
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data
+    networks:
+      - backend
+networks:
+  backend:
