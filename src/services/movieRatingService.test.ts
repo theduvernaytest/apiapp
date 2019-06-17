@@ -1500,4 +1500,236 @@ describe('processAnswer test', function () {
 
         return mongoService.createOrUpdateRating.should.have.been.calledWith(expectedRating);
     });
+
+    it('should calculate right average value when one of questions is not applicable', async function () {
+        mongoService.getAllQuestions.returns([
+            {
+                '_id': '5b0f67ea350970000e8b28f9',
+                'header': 'CASTING DECISIONS',
+                'helptext': 'WHITEWASH (ˈhwīt-ˌwȯsh) / verb / a practice in which white actors are cast in non-white roles (e.g. Scarlett Johansson in Ghost in the Shell or Jake Gyllenhaal in Prince of Persia). In addition to whitewashing, Hollywood has a tendency to lump ethnicities together (e.g. casting a Chinese actor to play a Japanese role, or a Pakistani actor to play an Arab).',
+                'options': [
+                    {
+                        'answer': 'Yes',
+                        'points': 0
+                    },
+                    {
+                        'answer': 'No',
+                        'points': 10
+                    },
+                    {
+                        'answer': 'No, but not enough main characters of color',
+                        'points': 5
+                    },
+                    {
+                        'answer': 'No main characters of color',
+                        'points': 3
+                    }
+                ],
+                'question': 'Are any characters of color whitewashed, or played by actors of a different ethnicity?',
+                'weight': 150
+            },
+            {
+                '_id': '5b0f6804dae25f000eddd296',
+                'header': 'POWER DYNAMICS',
+                'helptext': 'Are they stuck playing the best friend character? Or the sidekick? Or the caring, insightful “help”? Aint nobody got time for that. If all the character does is help the white person to talk out their feelings or to make a decision, or talk to other characters of color about the white person, then they’re not fully formed.',
+                'options': [
+                    {
+                        'answer': 'Yes',
+                        'points': 10
+                    },
+                    {
+                        'answer': 'Somewhat',
+                        'points': 5
+                    },
+                    {
+                        'answer': 'No',
+                        'points': 0
+                    },
+                    {
+                        'answer': 'No main characters of color',
+                        'points': 3
+                    }
+                ],
+                'question': 'Do the characters of color pursue their own goals separate from the white characters?',
+                'weight': 120
+            },
+            {
+                '_id': '5b0f6816350970000e8b28fa',
+                'header': 'CHARACTER DEVELOPMENT',
+                'helptext': 'Yes, of course race is important, but people of color are more than that. Unless the story revolves around a race related issue (Dear White People; Malcolm X; Le Haine), a character of color should not be boxed in by their race.',
+                'options': [
+                    {
+                        'answer': 'Yes',
+                        'points': 0
+                    },
+                    {
+                        'answer': 'Yes, but its central to the story',
+                        'points': null
+                    },
+                    {
+                        'answer': 'No',
+                        'points': 10
+                    },
+                    {
+                        'answer': 'No, but not enough main characters of color',
+                        'points': 7
+                    },
+                    {
+                        'answer': 'No main characters of color',
+                        'points': 5
+                    }
+                ],
+                'question': 'Do the characters of color primarily talk about race?',
+                'weight': 70
+            },
+            {
+                '_id': '5b0f68265d3fb8000ef1e579',
+                'header': 'STEREOTYPES',
+                'helptext': 'This is a tricky one.  Depending on who you are and how your perspectives are shaped, what could be harmful to you could be honest to another. A good first question could be to ask: “Have I seen this type of character before?” If the character seems overly familiar, and if they’re depicted as guilty or deserving of a punishment, then perhaps it is a “harmful racist stereotype.” Another all too common instance could be when a story depicts a white savior coming to rescue or to educate people of color.',
+                'options': [
+                    {
+                        'answer': 'Yes',
+                        'points': 0
+                    },
+                    {
+                        'answer': 'Somewhat',
+                        'points': 5
+                    },
+                    {
+                        'answer': 'No',
+                        'points': 10
+                    },
+                    {
+                        'answer': 'Not Applicable',
+                        'points': 3
+                    }
+                ],
+                'question': 'Do the characters of color fulfill harmful, simplistic, or down-right racist stereotypes?',
+                'weight': 120
+            },
+            {
+                '_id': '5b0f6835350970000e8b28fb',
+                'header': 'CREATIVE TEAM',
+                'helptext': 'A story is inherently better informed when the director and/or writer is from the culture itself.  It may not make the film better or worse, but likely it will make it more honest. Could you imagine Moonlight being directed by Steven Spielberg? (What about The Color Purple though? Because it was).  If a story does not center around a specific race or culture, then this question may not be applicable (so pick Not Applicable).',
+                'options': [
+                    {
+                        'answer': 'Yes',
+                        'points': 10
+                    },
+                    {
+                        'answer': 'Somewhat',
+                        'points': 5
+                    },
+                    {
+                        'answer': 'No',
+                        'points': 0
+                    },
+                    {
+                        'answer': 'Not Applicable or I dont know',
+                        'points': null
+                    }
+                ],
+                'question': 'Is the director, writer, and/or creator representative of the story’s culture?',
+                'weight': 70
+            }
+        ]);
+
+        const expectedResult = {
+            newMeanRating: 'B',
+            newUsersRating: 'C',
+            result: 'TEST_COMPLETED'
+        };
+
+        const stubMovieAnswerSubmit: MovieAnswerSubmit = {
+            answer: 3,
+            movieId: 1403,
+            questionId: '5b0f6835350970000e8b28fb'
+        };
+
+        mongoService.getAllRatingsForMovie.returns([
+            {
+                '_id': '5ced794fbb96feb675dabf25',
+                'answers': [
+                    {
+                        'answer': 1,
+                        'questionId': '5b0f67ea350970000e8b28f9'
+                    },
+                    {
+                        'answer': 0,
+                        'questionId': '5b0f6804dae25f000eddd296'
+                    },
+                    {
+                        'answer': 2,
+                        'questionId': '5b0f6816350970000e8b28fa'
+                    },
+                    {
+                        'answer': 2,
+                        'questionId': '5b0f68265d3fb8000ef1e579'
+                    },
+                    {
+                        'answer': 3,
+                        'questionId': '5b0f6835350970000e8b28fb'
+                    }
+                ],
+                'rawArgs': {
+                    'sumScoreByQuestion': {
+                        '5b0f67ea350970000e8b28f9': 10,
+                        '5b0f6804dae25f000eddd296': 10,
+                        '5b0f6816350970000e8b28fa': 10,
+                        '5b0f68265d3fb8000ef1e579': 10,
+                        '5b0f6835350970000e8b28fb': 0
+                    },
+                    'total': 1
+                },
+                'review': '',
+                'subjectId': 'm1403',
+                'userId': '5ced6c06d1b7f7000ff4e514',
+                'userName': 'Maliha R.',
+                'usersRating': 'A'
+            },
+            {
+                '_id': '5ced7bcdbb96feb675dac905',
+                'answers': [
+                    {
+                        'answer': 1,
+                        'questionId': '5b0f67ea350970000e8b28f9'
+                    },
+                    {
+                        'answer': 0,
+                        'questionId': '5b0f6804dae25f000eddd296'
+                    }
+                ],
+                'review': '',
+                'subjectId': 's1403',
+                'userId': '5ce41e3fdadff4000f2ecb36',
+                'userName': 'Ramin M.'
+            },
+        ]);
+
+        mongoService.getAnswersForMovieForSpecificUser.returns([
+            {
+                'answer': 2,
+                'questionId': '5b0f67ea350970000e8b28f9'
+            },
+            {
+                'answer': 1,
+                'questionId': '5b0f6804dae25f000eddd296'
+            },
+            {
+                'answer': 3,
+                'questionId': '5b0f6816350970000e8b28fa'
+            },
+            {
+                'answer': 2,
+                'questionId': '5b0f68265d3fb8000ef1e579'
+            }
+        ]);
+
+        const stubUserId = 'fakeUserId';
+        const stubShortName = 'User T.';
+
+        const result = ratingService.processAnswer(stubMovieAnswerSubmit, stubUserId, stubShortName);
+
+        return result.should.eventually.be.deep.equal(expectedResult);
+    });
 });

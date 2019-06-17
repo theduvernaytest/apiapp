@@ -140,13 +140,13 @@ export class AnswersController {
            const movieInfo = await this.mongoService.getAdditionalMovieInfoByMovieId(requestBody.movieId);
 
            if (movieInfo) {
-               const updatedMovieInfo = Object.assign({}, movieInfo, { rating: result.newUsersRating });
+               const updatedMovieInfo = Object.assign({}, movieInfo, { rating: result.newMeanRating });
 
                this.mongoService.createOrUpdateMovieInfo(omit(updatedMovieInfo, ['ratedCounter', 'reviewsCounter']), 1, 0);
            } else {
                const newMovieInfo = {
                    globalMovieId: requestBody.movieId,
-                   rating: result.newUsersRating,
+                   rating: result.newMeanRating,
                };
 
                this.mongoService.createOrUpdateMovieInfo(newMovieInfo, 1, 0);
@@ -187,13 +187,13 @@ export class AnswersController {
             if (showInfo) {
                 const showInfoWithoutAutoUpgradableFields = omit(showInfo, ['ratedCounter', 'reviewsCounter']);
 
-                const updatedShowInfo = Object.assign({}, showInfoWithoutAutoUpgradableFields, { rating: result.newUsersRating });
+                const updatedShowInfo = Object.assign({}, showInfoWithoutAutoUpgradableFields, { rating: result.newMeanRating });
 
                 this.mongoService.createOrUpdateShowInfo(updatedShowInfo, 1, 0);
             } else {
                 const newShowInfo = {
                     globalShowId: requestBody.showId,
-                    rating: result.newUsersRating
+                    rating: result.newMeanRating
                 };
 
                 this.mongoService.createOrUpdateShowInfo(newShowInfo, 1, 0);
