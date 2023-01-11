@@ -22,7 +22,7 @@
     "google-auth-library": "^1.6.1",
     "inversify": "^4.13.0",
     "inversify-binding-decorators": "^3.2.0",
-    "jsonwebtoken": "^8.3.0",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.10",
     "method-override": "^2.3.10",
     "mongodb": "^3.1.0",
